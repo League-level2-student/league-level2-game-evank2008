@@ -1,3 +1,4 @@
+import java.awt.Graphics;
 import java.awt.event.KeyListener;
 
 import javax.swing.JFrame;
@@ -7,7 +8,7 @@ public class Momentum {
 
 	GamePanel gpanel;
 	JFrame frame;
-	public static final int WIDTH = 1511;
+	public static final int WIDTH = 1512;
 	public static final int HEIGHT = 850;
 	
 	public static void main(String[] args) {
@@ -27,4 +28,5 @@ public class Momentum {
 		frame.setSize(WIDTH,HEIGHT);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
+	
 }
