@@ -14,15 +14,17 @@ import javax.swing.Timer;
 public class GamePanel extends JPanel implements ActionListener, KeyListener{
 
 	Car carBlue;
+	Car carRed;
 	Graphics graphic;
 	BufferedImage image;
 	public GamePanel() {
-		carBlue = new Car(500,400,232,90,"car_blue_right.png");
+		carBlue = new Car(500,400,"car_blue_right.png",true);
+		carRed = new Car(800,400,"car_red_left.png",false);
 	}
 	@Override
 	public void paintComponent(Graphics g) {
 		drawBackground(g);
-
+		carRed.draw(g);
 		carBlue.draw(g);
 	}
 	void drawBackground(Graphics g) {
