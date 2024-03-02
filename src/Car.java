@@ -5,16 +5,9 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class Car {
-	LetterKey keyW;
-	LetterKey keyA;
-	LetterKey keyS;
-	LetterKey keyD;
-	LetterKey keyQ;
-	LetterKey keyI;
-	LetterKey keyJ;
-	LetterKey keyK;
-	LetterKey keyL;
-	LetterKey keyU;
+	LetterKey[]keys=new LetterKey[5];
+	private int xAccel;
+	private int yAccel;
 	int x;
 	int y;
 	int width;
@@ -24,47 +17,55 @@ public class Car {
 	public Car(int x, int y, String fileName, boolean leftKeys) {
 		this.x=x;
 		this.y=y;
-		this.width=174;
-		this.height=68;
+		this.width=210;
+		this.height=70;
 		this.leftKeys=leftKeys;
 		carImage = loadImage(fileName);
 		if(leftKeys==true) {
-			 keyW = new LetterKey(this,"w");
-			 keyA = new LetterKey(this,"a");
-			 keyS = new LetterKey(this,"s");
-			 keyD = new LetterKey(this,"d");
-			 keyQ = new LetterKey(this,"q");
+			keys[0] = new LetterKey(this,'w');
+			keys[1] = new LetterKey(this,'a');
+			keys[2] = new LetterKey(this,'s');
+			keys[3] = new LetterKey(this,'d');
+			keys[4] = new LetterKey(this,'q');
 		} else {
-			 keyI = new LetterKey(this,"i");
-			 keyJ = new LetterKey(this,"j");
-			 keyK = new LetterKey(this,"k");
-			 keyL = new LetterKey(this,"l");
-			 keyU = new LetterKey(this,"u");
+			keys[0] = new LetterKey(this,'i');
+			keys[1] = new LetterKey(this,'j');
+			keys[2] = new LetterKey(this,'k');
+			keys[3] = new LetterKey(this,'l');
+			keys[4] = new LetterKey(this,'u');
 		}
 	}
 	void draw(Graphics g) {
 		g.drawImage(carImage, x, y, width, height, null);
-		
-		if(leftKeys) {
-			keyS.draw(g,1);
-			keyW.draw(g,1);
-			keyA.draw(g,1);
-			keyD.draw(g,1);
-			keyQ.draw(g,1);
-			}
-		else {
-			keyI.draw(g,1);
-			keyJ.draw(g,1);
-			keyK.draw(g,1);
-			keyL.draw(g,1);
-			keyU.draw(g,1);
-			}
+		for(int i = 0; i<5;i++) {
+			keys[i].draw(g);
+		}
 	}
 	public int getX() {
 		return(x);
 	}
 	public int getY() {
 		return(y);
+	}
+	public int getXAccel() {
+		xAccel=0;
+		if(keys[0].hasBeenPressed) {
+			xAccel--;
+		}
+		if(keys[2].hasBeenPressed) {
+			xAccel++;
+		}
+		return(xAccel);
+	}
+	public int getYAccel() {
+		yAccel=0;
+		if(keys[1].hasBeenPressed) {
+			yAccel--;
+		}
+		if(keys[3].hasBeenPressed) {
+			yAccel++;
+		}
+		return(yAccel);
 	}
 	BufferedImage loadImage (String fileName) {
 		try {
