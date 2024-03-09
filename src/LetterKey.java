@@ -24,24 +24,24 @@ BufferedImage image;
 		grayImage = loadImage("letter keys/"+letter+"_gray.png");
 		greenImage = loadImage("letter keys/"+letter+"_green.png");
 		if(letter=='s'||letter=='k') {
-			offsetX=55;
-			offsetY=-70;
+			offsetX=70;
+			offsetY=-75;
 		}
 		if(letter=='q'||letter=='u') {
-			offsetX=55;
-			offsetY=-120;
+			offsetX=70;
+			offsetY=-128;
 		}
 		if(letter=='a'||letter=='j') {
-			offsetX=5;
-			offsetY=-120;
+			offsetX=17;
+			offsetY=-128;
 		}
 		if(letter=='d'||letter=='l') {
-			offsetX=108;
-			offsetY=-120;
+			offsetX=123;
+			offsetY=-128;
 		}
 		if(letter=='w'||letter=='i') {
-			offsetX=55;
-			offsetY=-170;
+			offsetX=70;
+			offsetY=-179;
 		}
 	}
 	void draw(Graphics g) {
@@ -56,7 +56,7 @@ BufferedImage image;
 			image = greenImage;
 			break;
 		}
-		g.drawImage(image, car.getX()+offsetX, car.getY()+offsetY, 50, 50, null);
+		g.drawImage(image, car.getX()+offsetX-17, car.getY()+offsetY+20, 53, 53, null);
 	}
 	char getLetter() {
 		return(letter);

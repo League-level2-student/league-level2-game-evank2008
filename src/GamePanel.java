@@ -17,19 +17,29 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 	Graphics graphic;
 	BufferedImage image;
 	boolean lockKeyPress = false;
+	boolean singlePlayer = false;
 	public GamePanel() {
-		carBlue = new Car(500,400,"cars/car_blue_right.png",true);
-		carRed = new Car(800,400,"cars/car_red_left.png",false);
+		carBlue = new Car(530,424,"cars/car_blue_right.png",true);
+		if(!singlePlayer) {carRed = new Car(795,424,"cars/car_red_left.png",false);}
 	}
 	@Override
 	public void paintComponent(Graphics g) {
-		g.setColor(Color.gray);
+		g.setColor(Color.darkGray);
 		g.fillRect(0, 0, Momentum.WIDTH, Momentum.HEIGHT);	
-		carRed.draw(g);
+		//draw grid
+		g.setColor(Color.gray);
+		for(int i=53;i<1908;i+=53){
+			g.drawLine(i, 0, i, 954);
+		}
+		for(int i=53;i<954;i+=53){
+			g.drawLine(0, i, 1908, i);
+		}
+		if(!singlePlayer) {carRed.draw(g);}
 		carBlue.draw(g);
 		if(areYaReady()) {
 			lockKeyPress=true;
-			//drive
+			carBlue.drive();
+			if(!singlePlayer) {carRed.drive();}
 			resetKeys();
 			lockKeyPress=false;
 			repaint();
@@ -37,11 +47,17 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 	}
 
 	boolean areYaReady() {
-		if(carBlue.keys[4].hasBeenPressed&&carRed.keys[4].hasBeenPressed) {
-			return(true);
-		} else {
-			return(false);
-		}
+		if(carBlue.keys[4].hasBeenPressed) {
+			if(singlePlayer) {
+				return(true);
+			} else {
+			if(carRed.keys[4].hasBeenPressed) {
+		return(true);
+			} else {
+				return(false);
+			}		
+			}
+	} else {return(false); }
 	}
 	
 	void resetKeys() {
@@ -49,11 +65,12 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 			l.hasBeenPressed=false;
 			l.color=1;
 		}
+		if(!singlePlayer) {
 		for(LetterKey l:carRed.keys) {
 			l.hasBeenPressed=false;
 			l.color=1;
-		}
-		System.out.println("keys have been reset");
+		} }
+		
 	}
 	
 	@Override
@@ -69,11 +86,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 			}
 			
 		} else if(e.getKeyChar()=='i'||e.getKeyChar()=='j'||e.getKeyChar()=='k'||e.getKeyChar()=='l'||e.getKeyChar()=='u') {
+			if(!singlePlayer) {
 			//red car
 			for(LetterKey l:carRed.keys) {
 				if(l.getLetter()==e.getKeyChar()) {
 					l.color=2;
 				}
+			}
 			}
 		}
 		repaint();
@@ -98,6 +117,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 			
 		} else if(e.getKeyChar()=='i'||e.getKeyChar()=='j'||e.getKeyChar()=='k'||e.getKeyChar()=='l'||e.getKeyChar()=='u') {
 			//red car
+			if(!singlePlayer) {
 			for(LetterKey l:carRed.keys) {
 				if(l.getLetter()==e.getKeyChar()) {
 					l.hasBeenPressed = !l.hasBeenPressed;
@@ -107,6 +127,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 						l.color=1;
 					}
 				}
+			}
 			}
 		}
 		repaint();

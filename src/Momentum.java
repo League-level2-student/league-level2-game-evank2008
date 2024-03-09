@@ -8,8 +8,9 @@ public class Momentum {
 
 	GamePanel gpanel;
 	JFrame frame;
-	public static final int WIDTH = 1920;
-	public static final int HEIGHT = 960;
+	//grid of 53-pixel blocks
+	public static final int WIDTH = 1908;
+	public static final int HEIGHT = 954;
 	
 	public static void main(String[] args) {
 		Momentum men = new Momentum();
