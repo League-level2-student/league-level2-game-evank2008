@@ -12,15 +12,18 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class GamePanel extends JPanel implements ActionListener, KeyListener{
+	int timerCounter = 0;
+	Timer driveTimer = new Timer(1000/60, this);
 	Car carBlue;
 	Car carRed;
 	Graphics graphic;
 	BufferedImage image;
 	boolean lockKeyPress = false;
 	boolean singlePlayer = false;
+	ObjectManager man = new ObjectManager(carBlue,carRed);
 	public GamePanel() {
-		carBlue = new Car(530,424,"cars/car_blue_right.png",true);
-		if(!singlePlayer) {carRed = new Car(795,424,"cars/car_red_left.png",false);}
+		carBlue = new Car(530,424,"cars/car_blue_right.png",true, driveTimer);
+		if(!singlePlayer) {carRed = new Car(795,424,"cars/car_red_left.png",false, driveTimer);}
 	}
 	@Override
 	public void paintComponent(Graphics g) {
@@ -39,7 +42,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 		if(areYaReady()) {
 			lockKeyPress=true;
 			carBlue.drive();
-			if(!singlePlayer) {carRed.drive();}
+			if(!singlePlayer) {
+				carRed.drive();}
+			driveTimer.start();
 			resetKeys();
 			lockKeyPress=false;
 			repaint();
@@ -141,7 +146,20 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		
+		 if(e.getSource()==driveTimer) {
+			if(timerCounter<26) {
+				timerCounter++;
+				carBlue.move(26);
+				if(!singlePlayer) {
+					carRed.move(26);
+				}
+			} else {
+				driveTimer.stop();
+				timerCounter=0;
+			} 
+			man.checkCollision();
+			repaint();
+		} 
 	}
 	
 }

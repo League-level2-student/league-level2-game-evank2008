@@ -4,8 +4,10 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.Timer;
 
-public class Car {
+
+public class Car{
 	LetterKey[]keys=new LetterKey[5];
 	private int xAccel;
 	private int yAccel;
@@ -17,14 +19,18 @@ public class Car {
 	int momentumX=0;
 	int momentumY=0;
 	boolean leftKeys;
+	String carImageName;
 	BufferedImage carImage;
-	public Car(int x, int y, String fileName, boolean leftKeys) {
+	Timer carTimer;
+	public Car(int x, int y, String fileName, boolean leftKeys, Timer timer) {
 		this.x=x;
 		this.y=y;
+		this.carImageName=fileName;
 		this.width=159;
 		this.height=53;
 		this.leftKeys=leftKeys;
 		carImage = loadImage(fileName);
+		this.carTimer=timer;
 		if(leftKeys==true) {
 			keys[0] = new LetterKey(this,'w');
 			keys[1] = new LetterKey(this,'a');
@@ -45,11 +51,12 @@ public class Car {
 			keys[i].draw(g);
 		}
 		//bounding box
+		
 		g.setColor(Color.red);
 		g.drawRect(x, y, width, height);
 		g.setColor(Color.PINK);
 		//predictor of destination
-		if(leftKeys) {
+		if(momentumX+getXAccel()>=0) {
 			g.drawLine(x+159, y+27, x+159+(momentumX+getXAccel())*gridSpeedPx, y+27+(momentumY+getYAccel())*gridSpeedPx);
 		} else {
 			//maybe replace with drawPolygon to increase thickness
@@ -59,8 +66,12 @@ public class Car {
 	void drive() {
 		momentumX+=getXAccel();
 		momentumY+=getYAccel();
-		x+=momentumX*gridSpeedPx;
-		y+=momentumY*gridSpeedPx;
+		x+=momentumX;
+		y+=momentumY;
+	}
+	void move(int howManyTimesIsThisGoingToMove) {
+		x+=momentumX*(gridSpeedPx-1)/howManyTimesIsThisGoingToMove;
+		y+=momentumY*(gridSpeedPx-1)/howManyTimesIsThisGoingToMove;
 	}
 	public int getX() {
 		return(x);
@@ -88,6 +99,7 @@ public class Car {
 		}
 		return(yAccel);
 	}
+	
 	BufferedImage loadImage (String fileName) {
 		try {
 			return (ImageIO.read(this.getClass().getResourceAsStream(fileName)));
