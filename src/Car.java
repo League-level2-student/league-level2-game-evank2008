@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -22,6 +23,9 @@ public class Car{
 	String carImageName;
 	BufferedImage carImage;
 	Timer carTimer;
+	Rectangle collisionHull;
+	boolean hasThisCarCrashed = false;
+	boolean facingLeft;
 	public Car(int x, int y, String fileName, boolean leftKeys, Timer timer) {
 		this.x=x;
 		this.y=y;
@@ -31,6 +35,7 @@ public class Car{
 		this.leftKeys=leftKeys;
 		carImage = loadImage(fileName);
 		this.carTimer=timer;
+		collisionHull = new Rectangle(x,y,width,height);
 		if(leftKeys==true) {
 			keys[0] = new LetterKey(this,'w');
 			keys[1] = new LetterKey(this,'a');
@@ -47,20 +52,23 @@ public class Car{
 	}
 	void draw(Graphics g) {
 		g.drawImage(carImage, x, y, width, height, null);
+		if(!hasThisCarCrashed) {
 		for(int i = 0; i<5;i++) {
 			keys[i].draw(g);
-		}
+		} }
 		//bounding box
-		
+		collisionHull.setBounds(x, y, width, height); 
 		g.setColor(Color.red);
-		g.drawRect(x, y, width, height);
+		g.drawRect(collisionHull.x, collisionHull.y, collisionHull.width, collisionHull.height);
 		g.setColor(Color.PINK);
 		//predictor of destination
+		if(!hasThisCarCrashed) {
 		if(momentumX+getXAccel()>=0) {
 			g.drawLine(x+159, y+27, x+159+(momentumX+getXAccel())*gridSpeedPx, y+27+(momentumY+getYAccel())*gridSpeedPx);
 		} else {
-			//maybe replace with drawPolygon to increase thickness
+			
 		g.drawLine(x, y+27, x+(momentumX+getXAccel())*gridSpeedPx, y+27+(momentumY+getYAccel())*gridSpeedPx);
+		}
 		}
 		}
 	void drive() {
@@ -68,10 +76,44 @@ public class Car{
 		momentumY+=getYAccel();
 		x+=momentumX;
 		y+=momentumY;
+		//change direction if you changed direction
+		if(momentumX<0) {
+			facingLeft=true;
+			if(leftKeys) {
+				//you're blue now
+				carImage=loadImage("cars/car_blue_left.png");
+			} else {
+				carImage=loadImage("cars/car_red_left.png");
+			}	
+		} else if(momentumX>0){
+			facingLeft=false;
+			if(leftKeys) {
+				//you're blue now
+				carImage=loadImage("cars/car_blue_right.png");
+			} else {
+				carImage=loadImage("cars/car_red_right.png");
+			}	
+		}
 	}
 	void move(int howManyTimesIsThisGoingToMove) {
+		if(!hasThisCarCrashed) {
 		x+=momentumX*(gridSpeedPx-1)/howManyTimesIsThisGoingToMove;
 		y+=momentumY*(gridSpeedPx-1)/howManyTimesIsThisGoingToMove;
+		}
+	}
+	void crash() {
+		System.out.println("crash start, am i blue? " + leftKeys);
+		hasThisCarCrashed=true;
+		if(leftKeys&&facingLeft) {
+			carImage=loadImage("cars/car_blue_left_smashed.png");
+		} else if(leftKeys&&!facingLeft) {
+			carImage=loadImage("cars/car_blue_right_smashed.png");
+		} else if(!leftKeys&&facingLeft) {
+			carImage=loadImage("cars/car_red_left_smashed.png");
+		} else if(!leftKeys&&!facingLeft) {
+			carImage=loadImage("cars/car_red_right_smashed.png");
+		}
+		System.out.println("crash done, am i blue? " + leftKeys);
 	}
 	public int getX() {
 		return(x);
