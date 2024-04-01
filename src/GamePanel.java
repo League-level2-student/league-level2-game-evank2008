@@ -11,7 +11,10 @@ import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+
+//OI OI OI GO TO LINES 49 AND 50 T TURN THER CARS BACK ON YA WANKAH
 public class GamePanel extends JPanel implements ActionListener, KeyListener{
+	int gridSpeedPx = 53;
 	int timerCounter = 0;
 	Timer driveTimer = new Timer(1000/60, this);
 	Car carBlue;
@@ -21,16 +24,21 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 	boolean lockKeyPress = false;
 	boolean singlePlayer = false;
 	ObjectManager man;
+	TrackBuilder bob;
 	public GamePanel() {
-		carBlue = new Car(530,424,"cars/car_blue_right.png",true, driveTimer);
+		carBlue = new Car(530,424,"cars/car_blue_right.png",true, driveTimer, gridSpeedPx);
 		carBlue.facingLeft=false;
-		if(!singlePlayer) {carRed = new Car(795,424,"cars/car_red_left.png",false, driveTimer); carRed.facingLeft=true;}
-		 man = new ObjectManager(carBlue,carRed, singlePlayer);
+		if(!singlePlayer) {carRed = new Car(795,424,"cars/car_red_left.png",false, driveTimer, gridSpeedPx); carRed.facingLeft=true;}
+		 bob = new TrackBuilder(gridSpeedPx);
+		 bob.buildTrack1();
+		 man = new ObjectManager(carBlue,carRed, singlePlayer,bob); 
 	}
 	@Override
 	public void paintComponent(Graphics g) {
 		g.setColor(Color.darkGray);
-		g.fillRect(0, 0, Momentum.WIDTH, Momentum.HEIGHT);	
+		g.fillRect(0, 0, Momentum.WIDTH, Momentum.HEIGHT);
+		//draw track
+		bob.drawTrack(g);
 		//draw grid
 		g.setColor(Color.gray);
 		for(int i=53;i<1908;i+=53){
@@ -39,8 +47,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 		for(int i=53;i<954;i+=53){
 			g.drawLine(0, i, 1908, i);
 		}
-		if(!singlePlayer) {carRed.draw(g);}
-		carBlue.draw(g);
+		if(!singlePlayer)
+		//{carRed.draw(g);}
+	//	carBlue.draw(g);
 		if(areYaReady()) {
 			lockKeyPress=true;
 			carBlue.drive();
@@ -161,11 +170,14 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 					man.checkCollision(carRed, carBlue);
 					}
 				}
+				repaint();
 			} else {
 				driveTimer.stop();
 				timerCounter=0;
+				repaint();
+				//check for winner here
 			} 
-			repaint();
+			
 		} 
 	}
 	

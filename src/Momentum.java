@@ -10,7 +10,7 @@ public class Momentum {
 	JFrame frame;
 	//grid of 53-pixel blocks
 	public static final int WIDTH = 1908;
-	public static final int HEIGHT = 954;
+	public static final int HEIGHT = 982;
 	
 	public static void main(String[] args) {
 		Momentum men = new Momentum();

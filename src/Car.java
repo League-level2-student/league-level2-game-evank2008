@@ -12,7 +12,7 @@ public class Car{
 	LetterKey[]keys=new LetterKey[5];
 	private int xAccel;
 	private int yAccel;
-	private int gridSpeedPx = 53;
+	private int gridSpeedPx;
 	int x;
 	int y;
 	int width;
@@ -26,7 +26,8 @@ public class Car{
 	Rectangle collisionHull;
 	boolean hasThisCarCrashed = false;
 	boolean facingLeft;
-	public Car(int x, int y, String fileName, boolean leftKeys, Timer timer) {
+	public Car(int x, int y, String fileName, boolean leftKeys, Timer timer, int gridSpeedPx) {
+		this.gridSpeedPx=gridSpeedPx;
 		this.x=x;
 		this.y=y;
 		this.carImageName=fileName;
@@ -59,7 +60,7 @@ public class Car{
 		//bounding box
 		collisionHull.setBounds(x, y, width, height); 
 		g.setColor(Color.red);
-		g.drawRect(collisionHull.x, collisionHull.y, collisionHull.width, collisionHull.height);
+		//g.drawRect(collisionHull.x, collisionHull.y, collisionHull.width, collisionHull.height);
 		g.setColor(Color.PINK);
 		//predictor of destination
 		if(!hasThisCarCrashed) {
@@ -72,6 +73,7 @@ public class Car{
 		}
 		}
 	void drive() {
+		if(!hasThisCarCrashed) {
 		momentumX+=getXAccel();
 		momentumY+=getYAccel();
 		x+=momentumX;
@@ -93,6 +95,7 @@ public class Car{
 			} else {
 				carImage=loadImage("cars/car_red_right.png");
 			}	
+		}
 		}
 	}
 	void move(int howManyTimesIsThisGoingToMove) {
