@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,18 +16,22 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	int gridSpeedPx = 53;
 	int timerCounter = 0;
 	Timer driveTimer = new Timer(1000 / 60, this);
+	Timer showScreenTimer = new Timer(1000/60, this);
 	Car carBlue;
 	Car carRed;
 	Graphics graphic;
 	BufferedImage image;
+	BufferedImage endScreen;
 	boolean lockKeyPress = false;
 	boolean singlePlayer = false;
 	ObjectManager man;
 	TrackBuilder bob;
 	String gameEndReason;
-
+	int screenTimerCounter = 0;
+	
+	Font deathFont = new Font("Trebuchet MS", Font.BOLD, 30);
 	public GamePanel() {
-		carBlue = new Car(1219, 159, "cars/car_blue_left.png", true, driveTimer, gridSpeedPx);
+		carBlue = new Car(530, 159, "cars/car_blue_left.png", true, driveTimer, gridSpeedPx);
 		carBlue.facingLeft = false;
 		if (!singlePlayer) {
 			carRed = new Car(1219, 742, "cars/car_red_right.png", false, driveTimer, gridSpeedPx);
@@ -39,6 +44,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 	@Override
 	public void paintComponent(Graphics g) {
+			g.setFont(deathFont);
 		g.setColor(Color.darkGray);
 		g.fillRect(0, 0, Momentum.WIDTH, Momentum.HEIGHT);
 		// draw grid
@@ -65,6 +71,15 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 				lockKeyPress = false;
 				repaint();
 			}
+		
+	if(screenTimerCounter>0) { 
+			//time to show the end screen
+			g.drawImage(endScreen, ((7*screenTimerCounter)/15-21)*gridSpeedPx,gridSpeedPx*2,gridSpeedPx*21,gridSpeedPx*14,null);
+			g.setColor(new Color(0,0,0));
+			
+			g.drawString(gameEndReason, ((7*screenTimerCounter)/15-15)*gridSpeedPx, 12*gridSpeedPx-15);
+	}
+		
 	}
 
 	boolean areYaReady() {
@@ -189,26 +204,29 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 				repaint();
 				// check for winner here
 				switch(checkWinner()) {
-				case 0:
-					//no winner
-					System.out.println("nothing happened");
-					break;
 				case 1:
 					//blue survived
-					System.out.println("blue wins");
+					
+					showEndScreen();
 						break;
 				case 2:
 					//red survived
-					System.out.println("red wins");
+					showEndScreen();
 						break;
 				case 3:
 					//none survived
-					System.out.println("yall losers");
+					showEndScreen();
 						break;
 				}
-				System.out.println(gameEndReason);
 			}
 
+		} else if(e.getSource()==showScreenTimer) {
+			if(screenTimerCounter<60) {
+			repaint();
+			screenTimerCounter++;	
+			} else {
+			showScreenTimer.stop();
+			}
 		}
 	}
 	int checkWinner() {
@@ -226,10 +244,12 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 					//tie
 					caseTemp=5;
 					gameEndReason="Both cars passed their finish line";
+					endScreen=loadImage("props/neutralboard.png");
 				} else {
 					//blue finished before red
 					caseTemp=1;
 					gameEndReason="Blue finished before Red";
+					endScreen=loadImage("props/blueboard.png");
 				}
 			} else {
 				//blue did not hit the finish line
@@ -237,10 +257,12 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 					//red finished before blue
 					caseTemp=2;
 					gameEndReason="Red finished before Blue";
+					endScreen=loadImage("props/redboard.png");
 				} else {
 					//nobody finished
 					caseTemp=0;
 					gameEndReason="Nothing interesting happened";
+					endScreen=loadImage("props/neutralboard.png");
 				}
 			}
 			break;
@@ -248,16 +270,19 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			//blue survived
 		caseTemp=1;
 		gameEndReason="Red experienced kinetic energy";
+		endScreen=loadImage("props/blueboard.png");
 				break;
 		case 2:
 			//red survived
 		caseTemp=2;
 		gameEndReason="Blue experienced kinetic energy";
+		endScreen=loadImage("props/redboard.png");
 				break;
 		case 3:
 			//none survived
 		caseTemp=3;
 		gameEndReason="Both cars experienced kinetic energy";
+		endScreen=loadImage("props/neutralboard.png");
 			break;
 				default:
 				caseTemp=1337;
@@ -284,6 +309,23 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 				//both cars crashed, everybody loses
 				return(3);
 			}
+		}
+	}
+	void stopGame() {
+		lockKeyPress=true;
+	}
+	void showEndScreen() {
+		stopGame();
+		showScreenTimer.start();
+	}
+	BufferedImage loadImage(String fileName) {
+		try {
+			return (ImageIO.read(this.getClass().getResourceAsStream(fileName)));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("ERROR loading image: " + fileName);
+			e.printStackTrace();
+			return (null);
 		}
 	}
 }

@@ -66,14 +66,6 @@ public class TrackBuilder {
 		addLineRed(13,2,4,3);
 		yellowList.add(new Wall(12,1,1,5,"textures/yellow.png",gridSize));
 	}
-
-	void addWalls(int x, int y, int width, int height) {
-		for (int iy = y; iy < height + y; iy++) {
-			for (int ix = x; ix < width + x; ix++) {
-				wallsList.add(new Wall(ix, iy, 1, 1, "textures/bedrock.png", gridSize));
-			}
-		}
-	}
 	void addLineRed(int x, int y, int width, int height) {
 		for (int iy = y; iy < height + y; iy++) {
 			for (int ix = x; ix < width + x; ix++) {
